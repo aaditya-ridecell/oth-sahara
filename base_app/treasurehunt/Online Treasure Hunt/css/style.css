@@ -1,0 +1,13 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@700&display=swap');
+
+body {
+  background-image: url("../images/thback2.png");
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-position: center;
+  background-size:100% 100%;
+}
+
+.navbar a{
+	font-family: 'Space Mono', monospace;
+}
