@@ -124,4 +124,23 @@
 			width: 100%;
 		}
 	}
+	
+	.img-thumbnail
+	{
+		max-width: 100%;
+		height: 60vh;
+	}
+	
+	.mtop
+	{
+		margin-top:2vh;
+		width:30%;
+	}
+	
+	.mtop2
+	{	
+		margin-top:2vh;
+		width:10%;
+	}
+	
 
