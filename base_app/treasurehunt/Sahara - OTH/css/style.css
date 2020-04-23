@@ -143,4 +143,18 @@
 		width:10%;
 	}
 	
+	@media (max-width: 760px)
+	{
+		.mtop
+		{
+			margin-top:2vh;
+			width:50%;
+		}
+		.mtop2
+		{
+			margin-top:2vh;
+			width:30%;
+		}
+	}
+	
 
