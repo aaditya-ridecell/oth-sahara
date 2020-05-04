@@ -7,11 +7,10 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from datetime import datetime
+from django.contrib import messages
 
-
-def index(request):
-    return render(request, 'treasurehunt/index.html')
-
+# def index(request):
+#     return render(request, 'treasurehunt/index.html')
 
 # def register(request):
 #     if request.user.is_authenticated:
@@ -53,7 +52,6 @@ def user_login(request):
         email = request.POST.get('email')
         password = request.POST.get('password')
         user = authenticate(email=email, password=password)
-        print(user, email)
         if user:
             if user.is_active:
                 login(request, user)
@@ -61,11 +59,10 @@ def user_login(request):
             else:
                 return HttpResponse("ACCOUNT NOT ACTIVE")
         else:
-            print("Someone tried to login and failed")
-            print("UserName : {} and password {} ".format(email, password))
-            return HttpResponse("Invalid Login Details")
+            messages.warning(request, 'Wrong id or password')
+            return render(request, 'treasurehunt/index.html', {'flag': 1})
     else:
-        return render(request, 'treasurehunt/login.html')
+        return render(request, 'treasurehunt/index.html', {'flag': 1})
 
 
 @login_required
@@ -78,18 +75,19 @@ def user_logout(request):
 def question(request):
 
     question_fixed = [
-        '0', '1', '2', '3', '4', '5wopeiqweoj', '6XYyxasydyaanmp',
-        '7dwqeqpdsaaqQ', '8Qweqewqdsapoi', '9dsawqQwqe', '10QASawqeadsp',
-        '11IUoiruwefhdsl', '12IYRUEHDSnakhqw', '13KLJcmnxwqeg'
+        'iunmoid6gb', 'tRX8qaRmJp', 'QjQHE68KYF', 'FbjZg8JEcc', 'f1X3YrD8W9',
+        'Q6(the man who would live)', 'xZzrr11AyL', 'ciNt7FbDz4', 'jeZHXr6dYa',
+        '4LcGlbjua3', 'wZt5JLT3fp', 'dQ8quLottX', '5fmY44Iwri', 'jkVK9ZngIi',
+        'NgwDd9Ebbv', 'HFMlJGqcpX', 'yL8uNNcazx', 'CyZs3wjB0x', 'jpKdnk4whi',
+        'zZwAwMSAjU'
     ]
 
     current_user = request.user
     sc = models.Score.objects.get(user__exact=current_user)
-    if sc.score == 14:
-        return HttpResponse(
-            "<h1>Congratulations on Completing The Treasure Hunt</h1>")
+    if sc.score == 20:
+        return render(request, 'treasurehunt/end.html')
     else:
-        if request.method == 'POST' and sc.score != 14:
+        if request.method == 'POST' and sc.score != 20:
             ans_fixed = models.AnswerChecker.objects.get(index__exact=sc.score)
             question_form = forms.Answer(data=request.POST)
             if question_form.is_valid():
@@ -101,6 +99,7 @@ def question(request):
                 else:
                     return render(
                         request, 'treasurehunt/question.html', {
+                            'flag': 0,
                             'question_form': question_form,
                             'score': sc.score,
                             'question_fixed': question_fixed[sc.score],
@@ -108,17 +107,18 @@ def question(request):
             else:
                 return render(
                     request, 'treasurehunt/question.html', {
+                        'flag': 0,
                         'question_form': question_form,
                         'score': sc.score,
                         'question_fixed': question_fixed[sc.score],
                     })
-        elif sc.score == 14:
-            return HttpResponse(
-                "<h1>Congratulations on Completing The Treasure Hunt</h1>")
+        elif sc.score == 20:
+            return render(request, 'treasurehunt/end.html')
         else:
             question_form = forms.Answer()
         return render(
             request, 'treasurehunt/question.html', {
+                'flag': 0,
                 'question_form': question_form,
                 'score': sc.score,
                 'question_fixed': question_fixed[sc.score],
@@ -127,20 +127,21 @@ def question(request):
 
 def leaderboard(request):
     leader = models.Score.objects.all().order_by('-score', 'last_answer')
-    # if len(leader) >= 10:
-    user_name = []
-    for x in leader:
-        user_name.append((x.user.email, x.score, x.last_answer))
-    return render(request, 'treasurehunt/leaderboard.html', {
-        'user_name': user_name,
-    })
-    # else:
-    #     user_name = []
-    #     for x in leader:
-    #         user_name.append((x.user.email, x.score, x.last_answer))
-    #     return render(request, 'treasurehunt/leaderboard.html', {
-    #         'user_name': user_name,
-    #     })
+    if len(leader) >= 30:
+        user_name = []
+        for x in leader[:30]:
+            user_name.append((x.user.email, x.score, x.last_answer))
+        return render(request, 'treasurehunt/leaderboard.html', {
+            'flag': 0,
+            'user_name': user_name,
+        })
+    else:
+        user_name = []
+        for x in leader:
+            user_name.append((x.user.email, x.score, x.last_answer))
+        return render(request, 'treasurehunt/leaderboard.html', {
+            'user_name': user_name,
+        })
 
 
 #t = Score.objects.all().order_by('-score')
