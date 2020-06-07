@@ -20,6 +20,7 @@ TEMPLATE_DIR = os.path.join(BASE_DIR, 'treasurehunt/templates/treasurehunt')
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = 'p$u3t19q-fbb0xip^2)g_t-1^fug&=hv@ktj&g%qfx0obuae00'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True

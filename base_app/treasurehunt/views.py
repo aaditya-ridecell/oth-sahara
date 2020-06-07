@@ -59,7 +59,7 @@ def user_login(request):
             else:
                 return HttpResponse("ACCOUNT NOT ACTIVE")
         else:
-            messages.warning(request, 'Wrong id or password')
+            messages.warning(request, 'Wrong Email ID or Password')
             return render(request, 'treasurehunt/index.html', {'flag': 1})
     else:
         return render(request, 'treasurehunt/index.html', {'flag': 1})
@@ -75,26 +75,21 @@ def user_logout(request):
 def question(request):
 
     question_fixed = [
-        'iunmoid6gb', 'tRX8qaRmJp', 'QjQHE68KYF', 'FbjZg8JEcc', 'f1X3YrD8W9',
-        'Q6(the man who would live)', 'xZzrr11AyL', 'ciNt7FbDz4', 'jeZHXr6dYa',
-        '4LcGlbjua3', 'wZt5JLT3fp', 'dQ8quLottX', '5fmY44Iwri', 'jkVK9ZngIi',
-        'NgwDd9Ebbv', 'HFMlJGqcpX', 'yL8uNNcazx', 'CyZs3wjB0x', 'jpKdnk4whi',
-        'zZwAwMSAjU'
+        '4LcGlbjua3',
     ]
 
     current_user = request.user
     sc = models.Score.objects.get(user__exact=current_user)
-    if sc.score == 20:
+    if sc.score == 1:
         return render(request, 'treasurehunt/end.html')
     else:
-        if request.method == 'POST' and sc.score != 20:
+        if request.method == 'POST' and sc.score != 1:
             ans_fixed = models.AnswerChecker.objects.get(index__exact=sc.score)
             question_form = forms.Answer(data=request.POST)
             if question_form.is_valid():
                 ans = question_form.cleaned_data['answer']
                 if ans.lower() == ans_fixed.ans_value():
                     sc.score = sc.score + 1
-                    # sc.last_answer = datetime.now()
                     sc.save()
                 else:
                     return render(
@@ -112,7 +107,7 @@ def question(request):
                         'score': sc.score,
                         'question_fixed': question_fixed[sc.score],
                     })
-        elif sc.score == 20:
+        elif sc.score == 1:
             return render(request, 'treasurehunt/end.html')
         else:
             question_form = forms.Answer()
@@ -130,7 +125,7 @@ def leaderboard(request):
     if len(leader) >= 30:
         user_name = []
         for x in leader[:30]:
-            user_name.append((x.user.email, x.score, x.last_answer))
+            user_name.append((x.user.name, x.score, x.last_answer))
         return render(request, 'treasurehunt/leaderboard.html', {
             'flag': 0,
             'user_name': user_name,
@@ -138,7 +133,7 @@ def leaderboard(request):
     else:
         user_name = []
         for x in leader:
-            user_name.append((x.user.email, x.score, x.last_answer))
+            user_name.append((x.user.name, x.score, x.last_answer))
         return render(request, 'treasurehunt/leaderboard.html', {
             'user_name': user_name,
         })
